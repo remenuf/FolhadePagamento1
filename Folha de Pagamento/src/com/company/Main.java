@@ -14,7 +14,7 @@ public class Main {
         }
         Scanner input = new Scanner(System.in);
         String[][]agenda = new String[30][5];
-        int indiceAgenda = 2;
+        int indiceAgenda = 3;
 
         System.out.println("Digite o dia do mes");
         String dMes = input.nextLine();
@@ -24,6 +24,11 @@ public class Main {
         agenda[0][3] = "-1";
         agenda[1][0] = dSem;
         agenda[1][3] = "-1";
+        agenda[2][0] = "semanal";
+        agenda[2][1] = "2";
+        agenda[2][2] = "sex";
+        agenda[2][3] = "2";
+        agenda[2][4] = "semanal 2 sex";
 
         String[][] u0 = new String[10][11];
         String[][] u1 = new String[10][11];
@@ -92,6 +97,7 @@ public class Main {
                         undo -= 1;
                         undo = check(undo);
                         undoRedo(funcionario, u0, u1, u2, u3, u4, undo, 2);
+                        System.out.println(">>>OPERAÇÃO DESFEITA<<<");
                         break;
                     case 9:
                         undoRedo(funcionario, u0, u1, u2, u3, u4, undo, 1);
@@ -100,6 +106,7 @@ public class Main {
                         redo -= 1;
                         redo = check(redo);
                         undoRedo(funcionario, r0, r1, r2, r3, r4, redo, 2);
+                        System.out.println(">>>OPERAÇÃO REFEITA<<<");
                         break;
                     case 10:
                         modAgenda(funcionario, agenda, indiceAgenda, input);
@@ -114,9 +121,7 @@ public class Main {
                         dSem = input.nextLine();
 
                         agenda[0][0] = dMes;
-                        agenda[0][3] = "-1";
                         agenda[1][0] = dSem;
-                        agenda[1][3] = "-1";
                         break;
                     case 13:
                         return;
@@ -193,15 +198,15 @@ public class Main {
         System.out.println("Digite o tipo de funcionário, 1 para horário, 2 para assalariado e 3 para comissionado");
         funcionario[i][4] = input.nextLine();
 
-        System.out.println("Digite o dia de pagamento");
-        funcionario[i][5] = input.nextLine();
-
         if (funcionario[i][4].equals("1")) {
             System.out.println("Digite o pagamento por hora");
             funcionario[i][9] = input.nextLine();
             funcionario[i][10] = null;
+            funcionario[i][5] = "sex";
         }
         else if (funcionario[i][4].equals("2")) {
+            System.out.println("Digite o dia de pagamento");
+            funcionario[i][5] = input.nextLine();
             System.out.println("Digite o salário do funcionário");
             funcionario[i][9] = input.nextLine();
             funcionario[i][10] = null;
@@ -211,6 +216,7 @@ public class Main {
             funcionario[i][9] = input.nextLine();
             System.out.println("Informe a comissão por venda (em porcentagem)");
             funcionario[i][10] = input.nextLine();
+            funcionario[i][5] = "semanal 2 sex";
         }
 
         funcionario[i][2] = Integer.toString(i);
@@ -354,27 +360,32 @@ public class Main {
         double total;
         double salario;
         double imposto;
+        System.out.println("--------------------------------------------------");
         for (i = 0; i < 10; i++){
             if (searchAgenda(funcionario[i][5], agenda, indiceAgenda)){
                 salario = Double.parseDouble(funcionario[i][9]);
                 imposto = Double.parseDouble(funcionario[i][7]);
                 total = Double.parseDouble(funcionario[i][3]);
-                total += salario - ((imposto/100)*salario);
+                if (funcionario[i][4].equals("2") || funcionario[i][4].equals("3")){
+                    total += salario - ((imposto/100)*salario);
+                }
                 funcionario[i][3] = "0";
 
                 System.out.printf("Funcionário: %s\nID: %s\nSalário: %.2f\nStatus", funcionario[i][0], funcionario[i][2], total);
                 if (funcionario[i][6].equals("1")) System.out.println("Status: Depósito efetuado");
-                else if (funcionario[i][6].equals("2")) System.out.println("Status: Cheque enviado");
+                else if (funcionario[i][6].equals("2")) System.out.println("Status: Cheque enviado para " + funcionario[i][1]);
                 else System.out.println("Status: Cheque entregue");
                 System.out.println("--------------------------------------------------");
             }
         }
         int j;
         for (j = 2; j < indiceAgenda; j++){
-            if (agenda[j][3].equals("2")) agenda[j][3] = "1";
-            else if (agenda[j][3].equals("1")) agenda[j][3] = "0";
-            else if (agenda[j][3].equals("0")) agenda[j][3] = "3";
-            else if (agenda[j][3].equals("3")) agenda[j][3] = "2";
+            if (agenda[j][2].equals(agenda[1][0])) {
+                if (agenda[j][3].equals("2")) agenda[j][3] = "1";
+                else if (agenda[j][3].equals("1")) agenda[j][3] = "0";
+                else if (agenda[j][3].equals("0")) agenda[j][3] = "3";
+                else if (agenda[j][3].equals("3")) agenda[j][3] = "2";
+            }
         }
         System.out.println(">>>PAGAMENTOS EFETUADOS COM SUCESSO<<<");
         return;
@@ -441,7 +452,7 @@ public class Main {
         System.out.println("Escolha o número da opção que deseja inserir");
         int j = Integer.parseInt(input.nextLine());
         funcionario[i][5] = agenda[j][4];
-        System.out.println(">>>aLTERAÇÃO CONCLUÍDA\n");
+        System.out.println(">>>ALTERAÇÃO CONCLUÍDA\n");
         return;
     }
 
@@ -453,4 +464,3 @@ public class Main {
         return j;
     }
 }
-
