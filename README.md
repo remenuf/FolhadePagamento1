@@ -60,4 +60,4 @@ Siga as instruções do programa.
 
 Segue para o dia seguinte, a data será pedida novamente para operar no próximo dia.
 
-** 13 - Encerrar programa.**
+**13 - Encerrar programa.**
